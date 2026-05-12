@@ -1,43 +1,22 @@
 # Render Blueprint for the Student AI Chatbot
 # Docs: https://render.com/docs/blueprint-spec
 #
-# This deploys the project as a free Static Site on Render.
-# No build step is needed — the files are served as-is from the repo root.
+# Deploys the app as a Node Web Service (not a Static Site).
+# Free plan. Auto-deploys on every git push.
 
 services:
   - type: web
-    runtime: static
     name: student-ai-chatbot
-    # Tier is free forever for static sites
+    runtime: node
     plan: free
-    # Nothing to build — it's plain HTML/CSS/JS
-    buildCommand: ""
-    # Serve files from the repo root (index.html is here)
-    staticPublishPath: .
-
-    # Route all unknown paths back to index.html (nice for SPAs / deep links)
-    routes:
-      - type: rewrite
-        source: /*
-        destination: /index.html
-
-    # Sensible caching + security headers for a static app
-    headers:
-      # Never cache index.html so updates show up immediately
-      - path: /index.html
-        name: Cache-Control
-        value: no-cache, no-store, must-revalidate
-      # Aggressively cache long-lived asset files (safe because the names are stable here;
-      # if you later add fingerprinted filenames you can make this `immutable`)
-      - path: /*.css
-        name: Cache-Control
-        value: public, max-age=3600
-      - path: /*.js
-        name: Cache-Control
-        value: public, max-age=3600
-      - path: /*
-        name: Referrer-Policy
-        value: strict-origin-when-cross-origin
-      - path: /*
-        name: X-Content-Type-Options
-        value: nosniff
+    region: oregon           # change if you prefer (frankfurt, singapore, ohio, virginia)
+    branch: main             # change if your default branch has a different name
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /healthz
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NODE_VERSION
+        value: 20.11.1

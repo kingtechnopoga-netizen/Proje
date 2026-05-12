@@ -30,24 +30,29 @@ user signs in to Puter (free) and Puter covers the model cost.
 
 ## Quick Start
 
-Just open `index.html` in any modern browser.
+### Run locally with Node
 
-### Option A — Simple local server (recommended)
-Some browsers restrict microphone/clipboard features on `file://`. Use a server:
 ```bash
-# Python 3
-python3 -m http.server 8000
-# then visit http://localhost:8000
-```
-or with Node:
-```bash
-npx serve .
+npm install
+npm start
+# open http://localhost:3000
 ```
 
-### Option B — GitHub Pages (free hosting)
-1. Repo → **Settings** → **Pages**
-2. Source: **Deploy from a branch** → pick your branch, folder `/ (root)` → **Save**
-3. Visit the Pages URL that appears (e.g. `https://<user>.github.io/<repo>/`)
+Requires Node 18+.
+
+### Deploy to Render (free Web Service)
+
+This repo includes a `render.yaml` blueprint, so one click gets you live.
+
+1. Push this repo to GitHub (already done here).
+2. Go to [render.com](https://render.com) and sign in with GitHub.
+3. Click **New +** → **Blueprint** → select this repo.
+4. Render reads `render.yaml` and creates a **Web Service** on the free plan.
+5. Wait for the first build (~1 minute). Your URL will look like
+   `https://student-ai-chatbot.onrender.com`.
+
+See [DEPLOY.md](DEPLOY.md) for a full step-by-step walkthrough and a manual
+(no-blueprint) setup.
 
 ## How it works
 
