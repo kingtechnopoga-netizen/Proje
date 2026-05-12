@@ -14,7 +14,10 @@ name: Deploy to Render
 
 on:
   push:
-    branches: [main]
+    # Matches both 'main' (if you rename) and the current feature branch.
+    branches:
+      - main
+      - feature/student-ai-chatbot
     # Don't deploy when only docs change
     paths-ignore:
       - '**.md'

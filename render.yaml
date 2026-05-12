@@ -10,7 +10,7 @@ services:
     runtime: node
     plan: free
     region: oregon           # change if you prefer (frankfurt, singapore, ohio, virginia)
-    branch: main             # change if your default branch has a different name
+    branch: feature/student-ai-chatbot   # change to 'main' if you rename the branch on GitHub
     buildCommand: npm install
     startCommand: npm start
     healthCheckPath: /healthz
