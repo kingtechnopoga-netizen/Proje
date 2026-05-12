@@ -42,17 +42,19 @@ Requires Node 18+.
 
 ### Deploy to Render (free Web Service)
 
-This repo includes a `render.yaml` blueprint, so one click gets you live.
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/kingtechnopoga-netizen/Proje)
 
-1. Push this repo to GitHub (already done here).
-2. Go to [render.com](https://render.com) and sign in with GitHub.
-3. Click **New +** → **Blueprint** → select this repo.
-4. Render reads `render.yaml` and creates a **Web Service** on the free plan.
-5. Wait for the first build (~1 minute). Your URL will look like
-   `https://student-ai-chatbot.onrender.com`.
+This repo is fully automated:
 
-See [DEPLOY.md](DEPLOY.md) for a full step-by-step walkthrough and a manual
-(no-blueprint) setup.
+- A `render.yaml` blueprint so Render configures itself (Node, free plan, health check).
+- `autoDeploy: true` — every `git push` to `main` redeploys automatically.
+- A GitHub Actions workflow that pings `/healthz` every 10 minutes so the
+  free instance never sleeps.
+- An optional GitHub Actions workflow that can trigger a Render deploy via
+  deploy hook (backup path-scoped deploys).
+
+Click the button above, or see [DEPLOY.md](DEPLOY.md) for the step-by-step
+walkthrough and automation setup.
 
 ## How it works
 

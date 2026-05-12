@@ -1,0 +1,53 @@
+name: Keep Render service awake
+
+# Render's free plan spins the service down after ~15 minutes of inactivity.
+# This workflow pings the /healthz endpoint every 10 minutes so your chatbot
+# is always ready when you (or anyone) visits it.
+#
+# SETUP (one-time):
+#   After the service is live on Render, copy its URL (e.g. https://student-ai-chatbot.onrender.com).
+#   In GitHub: repo → Settings → Secrets and variables → Actions → Variables tab → New repository variable
+#     Name:  RENDER_URL
+#     Value: https://student-ai-chatbot.onrender.com
+#
+# Note: this is a repo *variable* (not a secret) because the URL is public anyway.
+
+on:
+  schedule:
+    # Every 10 minutes. GitHub may delay by a few minutes on shared runners.
+    - cron: '*/10 * * * *'
+  workflow_dispatch: {}
+
+jobs:
+  ping:
+    name: Ping /healthz
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - name: Check URL variable
+        run: |
+          if [ -z "${{ vars.RENDER_URL }}" ]; then
+            echo "::warning::RENDER_URL repo variable is not set — skipping ping."
+            exit 0
+          fi
+
+      - name: Ping service
+        if: ${{ vars.RENDER_URL != '' }}
+        run: |
+          URL="${{ vars.RENDER_URL }}"
+          URL="${URL%/}"  # strip trailing slash
+          echo "Pinging $URL/healthz ..."
+          # Up to 3 tries; free instance can take ~30s to wake from sleep
+          for i in 1 2 3; do
+            status=$(curl -sS -o /tmp/body.json -w "%{http_code}" --max-time 45 "$URL/healthz" || echo "000")
+            echo "Attempt $i: HTTP $status"
+            if [ "$status" = "200" ]; then
+              cat /tmp/body.json
+              echo ""
+              echo "Service is awake."
+              exit 0
+            fi
+            sleep 10
+          done
+          echo "::error::Service did not respond with 200 after 3 attempts."
+          exit 1

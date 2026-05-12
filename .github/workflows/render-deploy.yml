@@ -1,0 +1,49 @@
+name: Deploy to Render
+
+# Triggers a Render deploy automatically on every push to main, and lets you
+# trigger it manually from the Actions tab. This is a backup to Render's
+# built-in auto-deploy — useful if you ever disable autoDeploy in render.yaml
+# or want to scope deploys to certain file paths.
+#
+# SETUP (one-time):
+#   1. In Render, open your service → Settings → scroll to "Deploy Hook"
+#   2. Click "Copy" to copy the hook URL
+#   3. In GitHub: repo → Settings → Secrets and variables → Actions → New repo secret
+#      Name:  RENDER_DEPLOY_HOOK
+#      Value: <the URL you copied>
+
+on:
+  push:
+    branches: [main]
+    # Don't deploy when only docs change
+    paths-ignore:
+      - '**.md'
+      - '.gitignore'
+      - '.github/**'
+  workflow_dispatch: {}
+
+jobs:
+  deploy:
+    name: Trigger Render deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ensure deploy hook is configured
+        run: |
+          if [ -z "${{ secrets.RENDER_DEPLOY_HOOK }}" ]; then
+            echo "::error::RENDER_DEPLOY_HOOK secret is not set. See workflow comments for setup steps."
+            exit 1
+          fi
+
+      - name: Call Render deploy hook
+        run: |
+          echo "Triggering Render deploy..."
+          response=$(curl -sS -w "\n%{http_code}" -X POST "${{ secrets.RENDER_DEPLOY_HOOK }}")
+          body=$(echo "$response" | head -n -1)
+          status=$(echo "$response" | tail -n 1)
+          echo "HTTP $status"
+          echo "$body"
+          if [ "$status" -ge 400 ]; then
+            echo "::error::Render rejected the deploy hook (HTTP $status)"
+            exit 1
+          fi
+          echo "Deploy queued successfully. Watch it finish at https://dashboard.render.com/"
