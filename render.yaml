@@ -1,0 +1,43 @@
+# Render Blueprint for the Student AI Chatbot
+# Docs: https://render.com/docs/blueprint-spec
+#
+# This deploys the project as a free Static Site on Render.
+# No build step is needed — the files are served as-is from the repo root.
+
+services:
+  - type: web
+    runtime: static
+    name: student-ai-chatbot
+    # Tier is free forever for static sites
+    plan: free
+    # Nothing to build — it's plain HTML/CSS/JS
+    buildCommand: ""
+    # Serve files from the repo root (index.html is here)
+    staticPublishPath: .
+
+    # Route all unknown paths back to index.html (nice for SPAs / deep links)
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+
+    # Sensible caching + security headers for a static app
+    headers:
+      # Never cache index.html so updates show up immediately
+      - path: /index.html
+        name: Cache-Control
+        value: no-cache, no-store, must-revalidate
+      # Aggressively cache long-lived asset files (safe because the names are stable here;
+      # if you later add fingerprinted filenames you can make this `immutable`)
+      - path: /*.css
+        name: Cache-Control
+        value: public, max-age=3600
+      - path: /*.js
+        name: Cache-Control
+        value: public, max-age=3600
+      - path: /*
+        name: Referrer-Policy
+        value: strict-origin-when-cross-origin
+      - path: /*
+        name: X-Content-Type-Options
+        value: nosniff
