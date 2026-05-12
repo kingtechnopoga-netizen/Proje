@@ -2,8 +2,11 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Student AI Chatbot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes" />
+  <meta name="theme-color" content="#121318" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <title>Study Buddy - Student AI Chatbot</title>
   <link rel="stylesheet" href="style.css" />
 
   <!-- Puter.js: free, keyless access to GPT-5, GPT-4o, Claude, Gemini, DeepSeek, Llama, etc. -->
@@ -94,6 +97,9 @@
       <p class="footer-note">Powered by Puter.js &mdash; no API key needed</p>
     </div>
   </aside>
+
+  <!-- Dark backdrop when sidebar is open (mobile) -->
+  <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
 
   <main class="main">
     <header class="topbar">

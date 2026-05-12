@@ -193,7 +193,10 @@ function switchChat(id) {
   clearAttachments();
   renderChatList();
   renderMessages();
-  if (window.innerWidth <= 820) elSidebar.classList.remove("open");
+  if (window.innerWidth <= 900) {
+    elSidebar.classList.remove("open");
+    $("sidebarBackdrop").classList.remove("show");
+  }
 }
 
 function getCurrentChat() {
@@ -743,6 +746,12 @@ elClearAll.addEventListener("click", () => {
 });
 elToggleSide.addEventListener("click", () => {
   elSidebar.classList.toggle("open");
+  $("sidebarBackdrop").classList.toggle("show", elSidebar.classList.contains("open"));
+});
+// Close sidebar when tapping backdrop
+$("sidebarBackdrop").addEventListener("click", () => {
+  elSidebar.classList.remove("open");
+  $("sidebarBackdrop").classList.remove("show");
 });
 elModel.addEventListener("change", () => {
   const c = getCurrentChat();
